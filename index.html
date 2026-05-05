@@ -1,0 +1,1370 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Brand Voice Agent — Perfect Doc Studio</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600&family=Sora:wght@400;500;600&family=Geist+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #080C14;
+      --panel: rgba(255, 255, 255, 0.05);
+      --panel-border: rgba(255, 255, 255, 0.08);
+      --divider: rgba(255, 255, 255, 0.06);
+      --text: #E7E9EE;
+      --muted: rgba(231, 233, 238, 0.6);
+      --muted-strong: rgba(231, 233, 238, 0.4);
+      --accent: #6C63FF;
+      --accent-2: #8B5CF6;
+      --cyan: #00D4C8;
+      --danger: rgba(255, 99, 99, 0.12);
+      --danger-border: rgba(255, 99, 99, 0.4);
+      --success: #3EE8B5;
+      --shadow: 0 20px 60px rgba(0, 0, 0, 0.45);
+      --glass-blur: blur(20px);
+      --radius-lg: 16px;
+      --radius-md: 12px;
+      --radius-sm: 10px;
+      --mono: "Geist Mono", "SFMono-Regular", ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+      --ui: "DM Sans", system-ui, -apple-system, sans-serif;
+      --heading: "Sora", system-ui, -apple-system, sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: var(--ui);
+      background: var(--bg);
+      color: var(--text);
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    .app {
+      display: grid;
+      grid-template-columns: 280px 1fr 300px;
+      height: 100vh;
+      gap: 0;
+    }
+
+    .panel {
+      height: 100vh;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .panel-inner {
+      height: 100%;
+      overflow-y: auto;
+      padding: 20px;
+    }
+
+    .panel + .panel {
+      border-left: 1px solid var(--divider);
+    }
+
+    .logo-row {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 18px;
+    }
+
+    .logo {
+      width: 28px;
+      height: 28px;
+      border-radius: 10px;
+      background: radial-gradient(circle at 30% 30%, var(--accent), var(--accent-2));
+      display: grid;
+      place-items: center;
+      color: white;
+      font-size: 14px;
+      box-shadow: 0 8px 20px rgba(108, 99, 255, 0.4);
+    }
+
+    .logo-text {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .logo-text h1 {
+      font-family: var(--heading);
+      font-size: 16px;
+      font-weight: 600;
+    }
+
+    .logo-text span {
+      font-size: 11px;
+      color: var(--muted);
+    }
+
+    .divider {
+      height: 1px;
+      background: var(--divider);
+      margin: 16px 0;
+    }
+
+    .field {
+      margin-bottom: 16px;
+    }
+
+    .label {
+      font-size: 10px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--muted-strong);
+      margin-bottom: 8px;
+      display: block;
+    }
+
+    input[type="text"],
+    select,
+    textarea {
+      width: 100%;
+      background: var(--panel);
+      border: 1px solid var(--panel-border);
+      border-radius: var(--radius-sm);
+      padding: 10px 12px;
+      color: var(--text);
+      font-family: var(--ui);
+      font-size: 13px;
+      outline: none;
+    }
+
+    select {
+      appearance: none;
+      background-image: linear-gradient(45deg, transparent 50%, var(--muted) 50%),
+        linear-gradient(135deg, var(--muted) 50%, transparent 50%);
+      background-position: calc(100% - 16px) calc(1em + 2px), calc(100% - 11px) calc(1em + 2px);
+      background-size: 5px 5px, 5px 5px;
+      background-repeat: no-repeat;
+    }
+
+    .collapsible {
+      background: var(--panel);
+      border: 1px solid var(--panel-border);
+      border-radius: var(--radius-md);
+      overflow: hidden;
+      margin-bottom: 12px;
+    }
+
+    .collapsible header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 12px;
+      cursor: pointer;
+    }
+
+    .collapsible header span {
+      font-size: 10px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--muted-strong);
+    }
+
+    .collapsible .content {
+      display: none;
+      padding: 12px;
+      border-top: 1px solid var(--divider);
+      font-family: var(--mono);
+      font-size: 11px;
+      color: var(--muted);
+      background: rgba(0, 0, 0, 0.25);
+    }
+
+    .collapsible.open .content {
+      display: block;
+    }
+
+    .generate-btn {
+      width: 100%;
+      border: none;
+      border-radius: var(--radius-sm);
+      background: linear-gradient(135deg, var(--accent), var(--accent-2));
+      color: white;
+      font-family: var(--heading);
+      font-size: 14px;
+      padding: 12px 16px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .generate-btn::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(120deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+      transform: translateX(-100%);
+      transition: transform 0.6s ease;
+    }
+
+    .generate-btn:hover::after {
+      transform: translateX(100%);
+    }
+
+    .generate-btn.loading {
+      opacity: 0.7;
+      pointer-events: none;
+    }
+
+    .spinner {
+      width: 16px;
+      height: 16px;
+      border: 2px solid rgba(255, 255, 255, 0.3);
+      border-top-color: white;
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+    }
+
+    @keyframes spin {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    .center-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 18px;
+    }
+
+    .tag-group {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .tag {
+      padding: 6px 12px;
+      border-radius: 20px;
+      background: rgba(108, 99, 255, 0.15);
+      color: var(--accent);
+      font-size: 12px;
+      font-weight: 500;
+    }
+
+    .kb {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 12px;
+      color: var(--muted);
+    }
+
+    .kb-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: var(--success);
+      box-shadow: 0 0 8px rgba(62, 232, 181, 0.7);
+    }
+
+    .output-card {
+      background: var(--panel);
+      border: 1px solid var(--panel-border);
+      border-radius: var(--radius-lg);
+      padding: 20px;
+      min-height: 260px;
+      position: relative;
+      overflow: hidden;
+      backdrop-filter: var(--glass-blur);
+      box-shadow: var(--shadow);
+    }
+
+    .output-title {
+      font-family: var(--heading);
+      font-size: 20px;
+      margin-bottom: 16px;
+    }
+
+    .section {
+      padding: 14px 0;
+      border-top: 1px solid var(--divider);
+    }
+
+    .section:first-of-type {
+      border-top: none;
+      padding-top: 0;
+    }
+
+    .section h4 {
+      font-size: 11px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--accent);
+      margin-bottom: 8px;
+    }
+
+    .section p {
+      font-size: 15px;
+      line-height: 1.8;
+      color: var(--muted);
+    }
+
+    .empty-state,
+    .error-state,
+    .loading-state {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      height: 100%;
+      gap: 12px;
+      color: var(--muted);
+    }
+
+    .error-state {
+      background: var(--danger);
+      border: 1px solid var(--danger-border);
+      border-radius: var(--radius-lg);
+      padding: 16px;
+    }
+
+    .skeleton {
+      width: 100%;
+      height: 12px;
+      background: rgba(255, 255, 255, 0.06);
+      border-radius: 6px;
+      animation: pulse 1.2s ease-in-out infinite;
+      margin-bottom: 10px;
+    }
+
+    @keyframes pulse {
+      0% {
+        opacity: 0.6;
+      }
+      50% {
+        opacity: 1;
+      }
+      100% {
+        opacity: 0.6;
+      }
+    }
+
+    .actions {
+      display: flex;
+      gap: 10px;
+      margin: 14px 0;
+      flex-wrap: wrap;
+    }
+
+    .action-btn {
+      background: var(--panel);
+      border: 1px solid var(--panel-border);
+      color: var(--text);
+      padding: 8px 12px;
+      border-radius: 999px;
+      font-size: 12px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      cursor: pointer;
+      transition: transform 0.2s ease, border-color 0.2s ease;
+    }
+
+    .action-btn:hover {
+      transform: translateY(-1px);
+      border-color: rgba(255, 255, 255, 0.2);
+    }
+
+    .chips {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-bottom: 18px;
+    }
+
+    .chip {
+      background: var(--panel);
+      border: 1px solid var(--panel-border);
+      border-radius: 999px;
+      padding: 6px 12px;
+      font-size: 12px;
+      color: var(--muted);
+      cursor: pointer;
+      transition: transform 0.2s ease, border-color 0.2s ease;
+    }
+
+    .chip:hover {
+      transform: translateY(-1px);
+      border-color: rgba(255, 255, 255, 0.2);
+    }
+
+    .chat {
+      border-top: 1px solid var(--divider);
+      padding-top: 16px;
+    }
+
+    .chat-label {
+      text-align: center;
+      font-size: 10px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--muted-strong);
+      margin-bottom: 16px;
+    }
+
+    .messages {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      max-height: 220px;
+      overflow-y: auto;
+      padding-right: 6px;
+      margin-bottom: 16px;
+    }
+
+    .message {
+      max-width: 80%;
+      padding: 10px 12px;
+      border-radius: 14px;
+      font-size: 13px;
+      line-height: 1.5;
+    }
+
+    .message.user {
+      align-self: flex-end;
+      background: rgba(108, 99, 255, 0.3);
+      color: white;
+    }
+
+    .message.ai {
+      align-self: flex-start;
+      background: var(--panel);
+      border-left: 2px solid var(--cyan);
+      color: var(--muted);
+    }
+
+    .chat-input {
+      display: flex;
+      gap: 10px;
+      align-items: flex-end;
+    }
+
+    .chat-input textarea {
+      flex: 1;
+      min-height: 44px;
+      max-height: 120px;
+      resize: none;
+    }
+
+    .btn-secondary,
+    .btn-primary {
+      border-radius: var(--radius-sm);
+      padding: 10px 12px;
+      border: 1px solid var(--panel-border);
+      background: var(--panel);
+      color: var(--text);
+      cursor: pointer;
+      font-size: 12px;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .btn-primary {
+      background: var(--accent);
+      border-color: transparent;
+    }
+
+    .swipe {
+      margin-top: 20px;
+      border-top: 1px solid var(--divider);
+      padding-top: 16px;
+    }
+
+    .swipe-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+
+    .swipe-title {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 10px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      color: var(--muted-strong);
+    }
+
+    .badge {
+      background: rgba(108, 99, 255, 0.2);
+      color: var(--accent);
+      border-radius: 999px;
+      padding: 2px 8px;
+      font-size: 11px;
+    }
+
+    .swipe-actions {
+      display: flex;
+      gap: 8px;
+    }
+
+    .swipe-card {
+      background: var(--panel);
+      border: 1px solid var(--panel-border);
+      border-radius: var(--radius-md);
+      padding: 12px;
+      margin-bottom: 10px;
+      position: relative;
+    }
+
+    .swipe-card:hover .swipe-card-actions {
+      opacity: 1;
+      transform: translateY(0);
+      pointer-events: auto;
+    }
+
+    .swipe-card .meta {
+      display: flex;
+      justify-content: space-between;
+      font-size: 12px;
+      color: var(--muted);
+      margin-bottom: 6px;
+    }
+
+    .swipe-card h5 {
+      font-size: 14px;
+      margin-bottom: 6px;
+    }
+
+    .swipe-card p {
+      font-size: 13px;
+      color: var(--muted);
+    }
+
+    .swipe-card-actions {
+      display: flex;
+      gap: 8px;
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      opacity: 0;
+      transform: translateY(-6px);
+      transition: all 0.2s ease;
+      pointer-events: none;
+    }
+
+    .tabs {
+      display: flex;
+      gap: 16px;
+      margin-bottom: 18px;
+      border-bottom: 1px solid var(--divider);
+    }
+
+    .tab {
+      padding-bottom: 10px;
+      font-size: 13px;
+      color: var(--muted);
+      cursor: pointer;
+      position: relative;
+    }
+
+    .tab.active {
+      color: var(--text);
+    }
+
+    .tab.active::after {
+      content: "";
+      position: absolute;
+      left: 0;
+      bottom: -1px;
+      width: 100%;
+      height: 2px;
+      background: var(--accent);
+    }
+
+    .tab-panel {
+      display: none;
+    }
+
+    .tab-panel.active {
+      display: block;
+    }
+
+    .radio-cards {
+      display: grid;
+      gap: 10px;
+    }
+
+    .radio-card {
+      background: var(--panel);
+      border: 1px solid var(--panel-border);
+      border-radius: var(--radius-md);
+      padding: 12px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      cursor: pointer;
+    }
+
+    .slider {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .segment {
+      display: flex;
+      gap: 6px;
+    }
+
+    .segment button {
+      background: var(--panel);
+      border: 1px solid var(--panel-border);
+      color: var(--muted);
+      padding: 8px 10px;
+      border-radius: 999px;
+      cursor: pointer;
+      font-size: 12px;
+    }
+
+    .segment button.active {
+      color: var(--text);
+      background: rgba(108, 99, 255, 0.2);
+      border-color: rgba(108, 99, 255, 0.4);
+    }
+
+    .history-item {
+      padding: 10px;
+      border: 1px solid var(--panel-border);
+      border-radius: var(--radius-md);
+      margin-bottom: 10px;
+      background: var(--panel);
+      font-size: 12px;
+    }
+
+    .history-item span {
+      color: var(--muted);
+      display: block;
+      margin-top: 6px;
+    }
+
+    .status {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 11px;
+      padding: 2px 8px;
+      border-radius: 999px;
+    }
+
+    .status.success {
+      background: rgba(62, 232, 181, 0.15);
+      color: var(--success);
+    }
+
+    .status.error {
+      background: rgba(255, 99, 99, 0.2);
+      color: #ff9090;
+    }
+
+    .fade-stagger {
+      animation: fadeUp 0.4s ease forwards;
+      opacity: 0;
+    }
+
+    .fade-left {
+      animation-delay: 0.08s;
+    }
+
+    .fade-center {
+      animation-delay: 0.16s;
+    }
+
+    .fade-right {
+      animation-delay: 0.24s;
+    }
+
+    @keyframes fadeUp {
+      from {
+        opacity: 0;
+        transform: translateY(12px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    ::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: rgba(255, 255, 255, 0.12);
+      border-radius: 999px;
+    }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <section class="panel fade-stagger fade-left">
+      <div class="panel-inner">
+        <div class="logo-row">
+          <div class="logo">✦</div>
+          <div class="logo-text">
+            <h1>Brand Voice Agent</h1>
+            <span>Perfect Doc Studio</span>
+          </div>
+        </div>
+        <div class="divider"></div>
+        <div class="field">
+          <label class="label">Recipient</label>
+          <input type="text" id="recipient" placeholder="e.g. SaaS Founder, HR Manager" />
+        </div>
+        <div class="field">
+          <label class="label">Platform</label>
+          <select id="platform">
+            <option value="">Select platform</option>
+            <option>LinkedIn</option>
+            <option>Twitter</option>
+            <option>Email</option>
+            <option>Website</option>
+            <option>WhatsApp</option>
+          </select>
+        </div>
+        <div class="field">
+          <label class="label">Output Type</label>
+          <select id="outputType">
+            <option value="">Select output type</option>
+          </select>
+        </div>
+        <div class="field">
+          <label class="label">Buyer Stage</label>
+          <select id="stage">
+            <option>Awareness</option>
+            <option>Consideration</option>
+            <option>Decision</option>
+            <option>Retention</option>
+            <option>Advocacy</option>
+          </select>
+        </div>
+        <div class="field">
+          <label class="label">Persona</label>
+          <input type="text" id="persona" placeholder="e.g. Skeptical CMO, Early Adopter" />
+        </div>
+        <div class="field">
+          <label class="label">Intent</label>
+          <select id="intent">
+            <option>Start Conversation</option>
+            <option>Educate</option>
+            <option>Convert</option>
+            <option>Nurture</option>
+            <option>Re-engage</option>
+          </select>
+        </div>
+        <div class="field">
+          <label class="label">Tone</label>
+          <select id="tone">
+            <option>Warm</option>
+            <option>Bold</option>
+            <option>Formal</option>
+            <option>Playful</option>
+            <option>Direct</option>
+            <option>Empathetic</option>
+          </select>
+        </div>
+        <div class="collapsible" id="promptPreview">
+          <header>
+            <span>Prompt Preview</span>
+            <span id="promptChevron">▾</span>
+          </header>
+          <div class="content" id="promptContent"></div>
+        </div>
+        <button class="generate-btn" id="generateBtn">
+          <span id="generateIcon">⚡</span>
+          <span id="generateText">Generate</span>
+        </button>
+      </div>
+    </section>
+
+    <section class="panel fade-stagger fade-center">
+      <div class="panel-inner">
+        <div class="center-top">
+          <div class="tag-group" id="tagGroup">
+            <span class="tag">Platform</span>
+            <span class="tag">Output Type</span>
+            <span class="tag">Stage</span>
+          </div>
+          <div class="kb">
+            <span class="kb-dot" id="kbDot"></span>
+            <span>Notion KB</span>
+          </div>
+        </div>
+        <div class="output-card" id="outputCard">
+          <div class="empty-state" id="emptyState">
+            <div style="font-size: 32px;">✨</div>
+            <p>Fill the form and hit Generate</p>
+          </div>
+          <div class="loading-state" id="loadingState" style="display:none;">
+            <div class="skeleton" style="height: 20px; width: 60%;"></div>
+            <div class="skeleton"></div>
+            <div class="skeleton"></div>
+            <div class="skeleton"></div>
+            <div class="skeleton"></div>
+            <div class="skeleton"></div>
+            <div class="skeleton"></div>
+          </div>
+          <div class="error-state" id="errorState" style="display:none;">
+            <strong>Something went wrong.</strong>
+            <p>Try again or check your connection.</p>
+            <button class="btn-secondary" id="retryBtn">Retry</button>
+            <pre id="rawResponse" style="display:none; margin-top:10px; text-align:left; font-family:var(--mono); font-size:11px;"></pre>
+          </div>
+          <div id="outputContent" style="display:none;"></div>
+        </div>
+        <div class="actions">
+          <button class="action-btn" id="copyBtn">📋 Copy</button>
+          <button class="action-btn" id="regenBtn">🔄 Regenerate</button>
+          <button class="action-btn" id="refineBtn">✨ Refine</button>
+          <button class="action-btn" id="saveBtn">🔖 Save</button>
+        </div>
+        <div class="chips">
+          <button class="chip">Make it shorter</button>
+          <button class="chip">Make it punchier</button>
+          <button class="chip">Add a CTA</button>
+          <button class="chip">More formal</button>
+          <button class="chip">Simpler language</button>
+        </div>
+        <div class="chat">
+          <div class="chat-label">Refine via chat</div>
+          <div class="messages" id="messages"></div>
+          <div class="chat-input">
+            <textarea id="chatInput" rows="1" placeholder="Ask for a refinement..."></textarea>
+            <button class="btn-secondary" id="improvePrompt">🪄 Improve Prompt</button>
+            <button class="btn-primary" id="sendBtn">➡ Send</button>
+          </div>
+        </div>
+        <div class="swipe">
+          <div class="swipe-header">
+            <div class="swipe-title">Swipe File <span class="badge" id="swipeCount">0</span></div>
+            <div class="swipe-actions">
+              <button class="btn-secondary" id="useLatest">Use Latest</button>
+              <button class="btn-secondary" id="clearAll">Clear All</button>
+            </div>
+          </div>
+          <div id="swipeList"></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="panel fade-stagger fade-right">
+      <div class="panel-inner">
+        <div class="tabs">
+          <div class="tab active" data-tab="context">Context</div>
+          <div class="tab" data-tab="retrieval">Retrieval</div>
+          <div class="tab" data-tab="output">Output</div>
+          <div class="tab" data-tab="history">History</div>
+        </div>
+        <div class="tab-panel active" id="context">
+          <div class="radio-cards">
+            <div class="radio-card">
+              <div>
+                <strong>Notion KB</strong>
+                <p style="font-size:12px;color:var(--muted);">Connected</p>
+              </div>
+              <div class="kb-dot"></div>
+            </div>
+            <div class="radio-card">
+              <div>
+                <strong>Custom</strong>
+                <p style="font-size:12px;color:var(--muted);">Paste text</p>
+              </div>
+              <div style="font-size:12px;color:var(--muted);">✎</div>
+            </div>
+          </div>
+          <div class="field" style="margin-top:16px;">
+            <label class="label">Custom Context</label>
+            <textarea id="customContext" rows="6" placeholder="Add extra context..."></textarea>
+          </div>
+        </div>
+        <div class="tab-panel" id="retrieval">
+          <div class="field">
+            <label class="label">Retrieval Depth</label>
+            <div class="slider">
+              <input type="range" id="depth" min="1" max="5" value="3" />
+              <span id="depthLabel" class="tag">Balanced</span>
+            </div>
+          </div>
+          <div class="field">
+            <label class="label">Match Threshold</label>
+            <select id="threshold">
+              <option>Strict</option>
+              <option selected>Balanced</option>
+              <option>Broad</option>
+            </select>
+          </div>
+          <div class="field">
+            <label class="label">Source Count</label>
+            <input type="number" id="sourceCount" min="1" max="10" value="4" />
+          </div>
+        </div>
+        <div class="tab-panel" id="output">
+          <div class="field">
+            <label class="label">Length</label>
+            <div class="segment" id="lengthSegment">
+              <button data-value="short">Short</button>
+              <button class="active" data-value="medium">Medium</button>
+              <button data-value="long">Long</button>
+            </div>
+          </div>
+          <div class="field">
+            <label class="label">Format</label>
+            <div class="segment" id="formatSegment">
+              <button class="active" data-value="paragraphs">Paragraphs</button>
+              <button data-value="bullets">Bullets</button>
+              <button data-value="mixed">Mixed</button>
+            </div>
+          </div>
+          <div class="field">
+            <label class="label">Language</label>
+            <select id="language">
+              <option>English</option>
+              <option>Tamil</option>
+              <option>Hindi</option>
+              <option>Spanish</option>
+            </select>
+          </div>
+          <div class="field">
+            <label class="label">Include sources</label>
+            <select id="includeSources">
+              <option value="true">Yes</option>
+              <option value="false">No</option>
+            </select>
+          </div>
+        </div>
+        <div class="tab-panel" id="history">
+          <div id="historyList"></div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <script>
+    const platformOutputMap = {
+      LinkedIn: ["Post", "Reply", "DM", "Comment"],
+      Twitter: ["Post", "Thread", "Reply", "DM"],
+      Email: ["Cold Email", "Follow-up", "Newsletter"],
+      Website: ["Hero Copy", "About", "CTA"],
+      WhatsApp: ["Message", "Reply", "Broadcast"]
+    };
+
+    const webhook = "https://hook.eu1.make.com/e52aplxvfia358g3ybg7ivljx5msn6in";
+    const swipeKey = "bva_swipe_file";
+    const historyKey = "bva_history";
+
+    const state = {
+      output: null,
+      lastPayload: null,
+      length: "medium",
+      format: "paragraphs",
+      includeSources: true
+    };
+
+    const els = {
+      platform: document.getElementById("platform"),
+      outputType: document.getElementById("outputType"),
+      recipient: document.getElementById("recipient"),
+      stage: document.getElementById("stage"),
+      persona: document.getElementById("persona"),
+      intent: document.getElementById("intent"),
+      tone: document.getElementById("tone"),
+      promptPreview: document.getElementById("promptPreview"),
+      promptContent: document.getElementById("promptContent"),
+      promptChevron: document.getElementById("promptChevron"),
+      generateBtn: document.getElementById("generateBtn"),
+      generateIcon: document.getElementById("generateIcon"),
+      generateText: document.getElementById("generateText"),
+      tagGroup: document.getElementById("tagGroup"),
+      outputCard: document.getElementById("outputCard"),
+      emptyState: document.getElementById("emptyState"),
+      loadingState: document.getElementById("loadingState"),
+      errorState: document.getElementById("errorState"),
+      outputContent: document.getElementById("outputContent"),
+      retryBtn: document.getElementById("retryBtn"),
+      rawResponse: document.getElementById("rawResponse"),
+      copyBtn: document.getElementById("copyBtn"),
+      regenBtn: document.getElementById("regenBtn"),
+      refineBtn: document.getElementById("refineBtn"),
+      saveBtn: document.getElementById("saveBtn"),
+      chips: document.querySelectorAll(".chip"),
+      messages: document.getElementById("messages"),
+      chatInput: document.getElementById("chatInput"),
+      improvePrompt: document.getElementById("improvePrompt"),
+      sendBtn: document.getElementById("sendBtn"),
+      swipeList: document.getElementById("swipeList"),
+      swipeCount: document.getElementById("swipeCount"),
+      useLatest: document.getElementById("useLatest"),
+      clearAll: document.getElementById("clearAll"),
+      depth: document.getElementById("depth"),
+      depthLabel: document.getElementById("depthLabel"),
+      threshold: document.getElementById("threshold"),
+      sourceCount: document.getElementById("sourceCount"),
+      lengthSegment: document.getElementById("lengthSegment"),
+      formatSegment: document.getElementById("formatSegment"),
+      language: document.getElementById("language"),
+      includeSources: document.getElementById("includeSources"),
+      customContext: document.getElementById("customContext"),
+      historyList: document.getElementById("historyList")
+    };
+
+    const tabs = document.querySelectorAll(".tab");
+    tabs.forEach(tab => {
+      tab.addEventListener("click", () => {
+        tabs.forEach(t => t.classList.remove("active"));
+        document.querySelectorAll(".tab-panel").forEach(panel => panel.classList.remove("active"));
+        tab.classList.add("active");
+        document.getElementById(tab.dataset.tab).classList.add("active");
+      });
+    });
+
+    function updateOutputTypes() {
+      const platform = els.platform.value;
+      const types = platformOutputMap[platform] || [];
+      els.outputType.innerHTML = '<option value="">Select output type</option>';
+      types.forEach(type => {
+        const option = document.createElement("option");
+        option.textContent = type;
+        els.outputType.appendChild(option);
+      });
+      updateTags();
+      updatePrompt();
+    }
+
+    function updateTags() {
+      els.tagGroup.innerHTML = "";
+      [els.platform.value || "Platform", els.outputType.value || "Output Type", els.stage.value || "Stage"].forEach(label => {
+        const tag = document.createElement("span");
+        tag.className = "tag";
+        tag.textContent = label;
+        els.tagGroup.appendChild(tag);
+      });
+    }
+
+    function assemblePrompt(extra = "") {
+      const form = {
+        recipient: els.recipient.value,
+        platform: els.platform.value,
+        outputType: els.outputType.value,
+        stage: els.stage.value,
+        persona: els.persona.value,
+        intent: els.intent.value,
+        tone: els.tone.value
+      };
+      const base = `Recipient: ${form.recipient}\nPlatform: ${form.platform}\nOutput Type: ${form.outputType}\nStage: ${form.stage}\nPersona: ${form.persona}\nIntent: ${form.intent}\nTone: ${form.tone}`;
+      return extra ? `${base}\nInstruction: ${extra}` : base;
+    }
+
+    function updatePrompt() {
+      els.promptContent.textContent = assemblePrompt();
+    }
+
+    function togglePrompt() {
+      els.promptPreview.classList.toggle("open");
+      els.promptChevron.textContent = els.promptPreview.classList.contains("open") ? "▴" : "▾";
+    }
+
+    function setLoading(isLoading) {
+      els.generateBtn.classList.toggle("loading", isLoading);
+      els.generateIcon.style.display = isLoading ? "none" : "inline";
+      els.generateText.textContent = isLoading ? "Generating…" : "Generate";
+      els.emptyState.style.display = isLoading ? "none" : (state.output ? "none" : "flex");
+      els.loadingState.style.display = isLoading ? "flex" : "none";
+      els.errorState.style.display = "none";
+      els.outputContent.style.display = state.output && !isLoading ? "block" : "none";
+    }
+
+    function setError(raw) {
+      els.errorState.style.display = "flex";
+      els.loadingState.style.display = "none";
+      els.outputContent.style.display = "none";
+      els.emptyState.style.display = "none";
+      els.rawResponse.style.display = raw ? "block" : "none";
+      els.rawResponse.textContent = raw || "";
+    }
+
+    function renderOutput(data) {
+      state.output = data;
+      els.outputContent.innerHTML = "";
+      const title = document.createElement("div");
+      title.className = "output-title";
+      title.textContent = data.title || "Generated Output";
+      els.outputContent.appendChild(title);
+
+      (data.sections || []).forEach(section => {
+        const sectionEl = document.createElement("div");
+        sectionEl.className = "section";
+        sectionEl.innerHTML = `<h4>${section.heading || "Section"}</h4><p>${section.content || ""}</p>`;
+        els.outputContent.appendChild(sectionEl);
+      });
+
+      if (state.includeSources && data.sources && data.sources.length) {
+        const sourceEl = document.createElement("div");
+        sourceEl.className = "section";
+        sourceEl.innerHTML = `<h4>Sources</h4><p>${data.sources.join("<br>")}</p>`;
+        els.outputContent.appendChild(sourceEl);
+      }
+
+      els.outputContent.style.display = "block";
+      els.emptyState.style.display = "none";
+      els.loadingState.style.display = "none";
+      els.errorState.style.display = "none";
+    }
+
+    async function callWebhook(extraInstruction = "") {
+      setLoading(true);
+      const payload = {
+        prompt: assemblePrompt(extraInstruction),
+        context: {
+          form: {
+            recipient: els.recipient.value,
+            platform: els.platform.value,
+            outputType: els.outputType.value,
+            stage: els.stage.value,
+            persona: els.persona.value,
+            intent: els.intent.value,
+            tone: els.tone.value
+          },
+          output_length: state.length,
+          retrieval_depth: Number(els.depth.value),
+          format: state.format,
+          language: els.language.value,
+          previous_output: state.output ? JSON.stringify(state.output) : ""
+        }
+      };
+      state.lastPayload = payload;
+
+      try {
+        const response = await fetch(webhook, {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify(payload)
+        });
+        const text = await response.text();
+        let json;
+        try {
+          json = JSON.parse(text);
+        } catch (err) {
+          setError(text);
+          addHistory(payload.prompt, "Error");
+          return;
+        }
+        renderOutput(json);
+        addHistory(payload.prompt, "Success", json);
+      } catch (err) {
+        setError(err.message);
+        addHistory(payload.prompt, "Error");
+      } finally {
+        setLoading(false);
+      }
+    }
+
+    function addMessage(text, role) {
+      const msg = document.createElement("div");
+      msg.className = `message ${role}`;
+      msg.textContent = text;
+      els.messages.appendChild(msg);
+      els.messages.scrollTop = els.messages.scrollHeight;
+    }
+
+    function addHistory(prompt, status, output = null) {
+      const history = JSON.parse(localStorage.getItem(historyKey) || "[]");
+      history.unshift({
+        timestamp: new Date().toISOString(),
+        prompt,
+        status,
+        output
+      });
+      localStorage.setItem(historyKey, JSON.stringify(history.slice(0, 50)));
+      renderHistory();
+    }
+
+    function renderHistory() {
+      const history = JSON.parse(localStorage.getItem(historyKey) || "[]");
+      els.historyList.innerHTML = "";
+      history.forEach(item => {
+        const el = document.createElement("div");
+        el.className = "history-item";
+        el.innerHTML = `<strong>${item.prompt.slice(0, 40)}...</strong><span>${new Date(item.timestamp).toLocaleTimeString()} <span class="status ${item.status === "Success" ? "success" : "error"}">${item.status}</span></span>`;
+        el.addEventListener("click", () => {
+          if (item.output) {
+            renderOutput(item.output);
+          }
+        });
+        els.historyList.appendChild(el);
+      });
+    }
+
+    function saveToSwipe() {
+      if (!state.output) return;
+      const list = JSON.parse(localStorage.getItem(swipeKey) || "[]");
+      list.unshift({
+        outputType: els.outputType.value || "Output",
+        timestamp: new Date().toISOString(),
+        title: state.output.title || "Untitled",
+        preview: (state.output.sections && state.output.sections[0] ? state.output.sections[0].content : "").slice(0, 120),
+        data: state.output
+      });
+      const trimmed = list.slice(0, 20);
+      localStorage.setItem(swipeKey, JSON.stringify(trimmed));
+      renderSwipe();
+    }
+
+    function renderSwipe() {
+      const list = JSON.parse(localStorage.getItem(swipeKey) || "[]");
+      els.swipeCount.textContent = list.length;
+      els.swipeList.innerHTML = "";
+      list.forEach((item, index) => {
+        const card = document.createElement("div");
+        card.className = "swipe-card";
+        card.innerHTML = `
+          <div class="meta">
+            <span class="tag">${item.outputType}</span>
+            <span>${new Date(item.timestamp).toLocaleString()}</span>
+          </div>
+          <h5>${item.title}</h5>
+          <p>${item.preview}</p>
+          <div class="swipe-card-actions">
+            <button class="btn-secondary" data-action="load" data-index="${index}">Load</button>
+            <button class="btn-secondary" data-action="copy" data-index="${index}">Copy</button>
+          </div>
+        `;
+        els.swipeList.appendChild(card);
+      });
+    }
+
+    function handleSwipeAction(event) {
+      const btn = event.target.closest("button");
+      if (!btn) return;
+      const index = Number(btn.dataset.index);
+      const list = JSON.parse(localStorage.getItem(swipeKey) || "[]");
+      const item = list[index];
+      if (!item) return;
+      if (btn.dataset.action === "load") {
+        renderOutput(item.data);
+      } else {
+        navigator.clipboard.writeText(JSON.stringify(item.data, null, 2));
+      }
+    }
+
+    function updateDepthLabel() {
+      const value = Number(els.depth.value);
+      const labels = ["Surface", "Balanced", "Balanced", "Deep", "Deep"];
+      els.depthLabel.textContent = labels[value - 1];
+    }
+
+    function toggleSegment(segment, value) {
+      segment.querySelectorAll("button").forEach(btn => {
+        btn.classList.toggle("active", btn.dataset.value === value);
+      });
+    }
+
+    els.platform.addEventListener("change", updateOutputTypes);
+    [els.outputType, els.stage, els.recipient, els.persona, els.intent, els.tone].forEach(el => {
+      el.addEventListener("input", () => {
+        updateTags();
+        updatePrompt();
+      });
+    });
+    els.promptPreview.addEventListener("click", togglePrompt);
+    els.generateBtn.addEventListener("click", () => callWebhook());
+    els.retryBtn.addEventListener("click", () => callWebhook());
+    els.regenBtn.addEventListener("click", () => callWebhook());
+
+    els.refineBtn.addEventListener("click", () => {
+      els.chatInput.value = "Improve this output by...";
+      els.chatInput.focus();
+    });
+
+    els.copyBtn.addEventListener("click", () => {
+      if (!state.output) return;
+      navigator.clipboard.writeText(JSON.stringify(state.output, null, 2));
+    });
+
+    els.saveBtn.addEventListener("click", saveToSwipe);
+
+    els.chips.forEach(chip => {
+      chip.addEventListener("click", () => {
+        const instruction = chip.textContent;
+        addMessage(instruction, "user");
+        callWebhook(instruction);
+      });
+    });
+
+    els.sendBtn.addEventListener("click", () => {
+      const text = els.chatInput.value.trim();
+      if (!text) return;
+      addMessage(text, "user");
+      els.chatInput.value = "";
+      callWebhook(text);
+    });
+
+    els.improvePrompt.addEventListener("click", () => {
+      els.chatInput.value = "Improve this output by...";
+      els.chatInput.focus();
+    });
+
+    els.swipeList.addEventListener("click", handleSwipeAction);
+
+    els.useLatest.addEventListener("click", () => {
+      const list = JSON.parse(localStorage.getItem(swipeKey) || "[]");
+      if (list[0]) {
+        renderOutput(list[0].data);
+      }
+    });
+
+    els.clearAll.addEventListener("click", () => {
+      localStorage.removeItem(swipeKey);
+      renderSwipe();
+    });
+
+    els.depth.addEventListener("input", updateDepthLabel);
+
+    els.lengthSegment.addEventListener("click", (event) => {
+      const btn = event.target.closest("button");
+      if (!btn) return;
+      state.length = btn.dataset.value;
+      toggleSegment(els.lengthSegment, state.length);
+    });
+
+    els.formatSegment.addEventListener("click", (event) => {
+      const btn = event.target.closest("button");
+      if (!btn) return;
+      state.format = btn.dataset.value;
+      toggleSegment(els.formatSegment, state.format);
+    });
+
+    els.includeSources.addEventListener("change", () => {
+      state.includeSources = els.includeSources.value === "true";
+      if (state.output) renderOutput(state.output);
+    });
+
+    updateOutputTypes();
+    updatePrompt();
+    updateDepthLabel();
+    renderSwipe();
+    renderHistory();
+  </script>
+</body>
+</html>
